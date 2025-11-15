@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div id="app" class="min-h-screen">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="container mx-auto px-4 py-8">
+            <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold mb-6 text-center">Visitor Management System</h2>
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700">Username</label>
+                        <input type="text" id="username" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Password</label>
+                        <input type="password" id="password" class="w-full p-2 border rounded" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="hidden container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Admin Dashboard</h2>
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- House Management -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4">House Management</h3>
+                    <form id="houseForm" class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-gray-700">House Number</label>
+                            <input type="text" id="houseNumber" class="w-full p-2 border rounded" required>
+                        </div>
+                        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add House</button>
+                    </form>
+                    <div id="housesList" class="space-y-2"></div>
+                </div>
+
+                <!-- User Management -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4">User Management</h3>
+                    <form id="userForm" class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-gray-700">Username</label>
+                            <input type="text" id="newUsername" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Password</label>
+                            <input type="password" id="newPassword" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Role</label>
+                            <select id="userRole" class="w-full p-2 border rounded" required>
+                                <option value="admin">Admin</option>
+                                <option value="guard">Guard</option>
+                                <option value="owner">Owner</option>
+                            </select>
+                        </div>
+                        <div id="ownerFields" class="hidden">
+                            <div>
+                                <label class="block text-gray-700">House Number</label>
+                                <select id="assignHouse" class="w-full p-2 border rounded"></select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700">Phone Number</label>
+                                <input type="tel" id="phoneNumber" class="w-full p-2 border rounded">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700">Email</label>
+                                <input type="email" id="email" class="w-full p-2 border rounded">
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add User</button>
+                    </form>
+                    <div id="usersList" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guard Dashboard -->
+        <div id="guardDashboard" class="hidden container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Guard Dashboard</h2>
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Visitor Registration -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4">Visitor Registration</h3>
+                    <form id="visitorForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700">Visitor Name</label>
+                            <input type="text" id="visitorName" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Contact Number</label>
+                            <input type="tel" id="visitorPhone" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Purpose of Visit</label>
+                            <input type="text" id="purpose" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Vehicle Number (Optional)</label>
+                            <input type="text" id="vehicleNumber" class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Select House</label>
+                            <select id="visitorHouse" class="w-full p-2 border rounded" required></select>
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+                    </form>
+                </div>
+
+                <!-- Visitor Entries -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4">Visitor Entries</h3>
+                    <div id="visitorEntries" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Owner Dashboard -->
+        <div id="ownerDashboard" class="hidden container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Owner Dashboard</h2>
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-xl font-semibold mb-4">Visitor Requests</h3>
+                <div id="visitorRequests" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let houses = [];
+        let users = [];
+        let visitors = [];
+
+        // Initialize the application
+        function init() {
+            // Check if admin exists, if not create default admin
+            const admin = getUserByUsername('admin');
+            if (!admin) {
+                createUser('admin', 'Admin@100100', 'admin');
+            }
+            
+            // Load data from localStorage
+            loadData();
+            
+            // Show login screen
+            showScreen('loginScreen');
+        }
+
+        // Data management functions
+        function loadData() {
+            houses = JSON.parse(localStorage.getItem('houses') || '[]');
+            users = JSON.parse(localStorage.getItem('users') || '[]');
+            visitors = JSON.parse(localStorage.getItem('visitors') || '[]');
+        }
+
+        function saveData() {
+            localStorage.setItem('houses', JSON.stringify(houses));
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('visitors', JSON.stringify(visitors));
+        }
+
+        // User management functions
+        function createUser(username, password, role, houseId = null, phone = null, email = null) {
+            const user = {
+                id: Date.now().toString(),
+                username,
+                password,
+                role,
+                houseId,
+                phone,
+                email
+            };
+            users.push(user);
+            saveData();
+            return user;
+        }
+
+        function getUserByUsername(username) {
+            return users.find(user => user.username === username);
+        }
+
+        // Authentication functions
+        function login(username, password) {
+            const user = getUserByUsername(username);
+            if (user && user.password === password) {
+                currentUser = user;
+                showDashboard(user.role);
+                return true;
+            }
+            return false;
+        }
+
+        function logout() {
+            currentUser = null;
+            showScreen('loginScreen');
+        }
+
+        // UI functions
+        function showScreen(screenId) {
+            document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function showDashboard(role) {
+            switch(role) {
+                case 'admin':
+                    showScreen('adminDashboard');
+                    refreshAdminDashboard();
+                    break;
+                case 'guard':
+                    showScreen('guardDashboard');
+                    refreshGuardDashboard();
+                    break;
+                case 'owner':
+                    showScreen('ownerDashboard');
+                    refreshOwnerDashboard();
+                    break;
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (login(username, password)) {
+                e.target.reset();
+            } else {
+                alert('Invalid credentials');
+            }
+        });
+
+        document.getElementById('userRole').addEventListener('change', (e) => {
+            const ownerFields = document.getElementById('ownerFields');
+            ownerFields.classList.toggle('hidden', e.target.value !== 'owner');
+        });
+
+        // Initialize the application
+        init();
+
+        // Admin dashboard functions
+        function refreshAdminDashboard() {
+            refreshHousesList();
+            refreshUsersList();
+            refreshHouseSelect();
+        }
+
+        function refreshHousesList() {
+            const housesList = document.getElementById('housesList');
+            housesList.innerHTML = houses.map(house => `
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <span>House ${house.number}</span>
+                    <button onclick="deleteHouse('${house.id}')" class="text-red-500">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function refreshUsersList() {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = users.map(user => `
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <span>${user.username} (${user.role})</span>
+                    <div>
+                        <button onclick="resetPassword('${user.id}')" class="text-blue-500 mr-2">
+                            <i class="bi bi-key"></i>
+                        </button>
+                        <button onclick="deleteUser('${user.id}')" class="text-red-500">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function refreshHouseSelect() {
+            const houseSelect = document.getElementById('assignHouse');
+            houseSelect.innerHTML = houses.map(house => `
+                <option value="${house.id}">House ${house.number}</option>
+            `).join('');
+        }
+
+        // Guard dashboard functions
+        function refreshGuardDashboard() {
+            refreshVisitorEntries();
+            refreshHouseSelect();
+        }
+
+        function refreshVisitorEntries() {
+            const entriesList = document.getElementById('visitorEntries');
+            entriesList.innerHTML = visitors.map(visitor => `
+                <div class="p-4 bg-gray-50 rounded">
+                    <div class="font-semibold">${visitor.name}</div>
+                    <div>House: ${getHouseNumber(visitor.houseId)}</div>
+                    <div>Status: ${visitor.status || 'Pending'}</div>
+                </div>
+            `).join('');
+        }
+
+        // Owner dashboard functions
+        function refreshOwnerDashboard() {
+            const requestsList = document.getElementById('visitorRequests');
+            const ownerVisitors = visitors.filter(v => v.houseId === currentUser.houseId);
+            requestsList.innerHTML = ownerVisitors.map(visitor => `
+                <div class="p-4 bg-gray-50 rounded">
+                    <div class="font-semibold">${visitor.name}</div>
+                    <div>Purpose: ${visitor.purpose}</div>
+                    ${!visitor.status ? `
+                        <div class="mt-2">
+                            <button onclick="approveVisitor('${visitor.id}')" class="bg-green-500 text-white px-3 py-1 rounded mr-2">
+                                Approve
+                            </button>
+                            <button onclick="rejectVisitor('${visitor.id}')" class="bg-red-500 text-white px-3 py-1 rounded">
+                                Reject
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="mt-2">Status: ${visitor.status}</div>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        // Helper functions
+        function getHouseNumber(houseId) {
+            const house = houses.find(h => h.id === houseId);
+            return house ? house.number : 'Unknown';
+        }
+
+        // Form handlers
+        document.getElementById('houseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const number = document.getElementById('houseNumber').value;
+            houses.push({ id: Date.now().toString(), number });
+            saveData();
+            refreshAdminDashboard();
+            e.target.reset();
+        });
+
+        document.getElementById('userForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('userRole').value;
+            const houseId = role === 'owner' ? document.getElementById('assignHouse').value : null;
+            const phone = role === 'owner' ? document.getElementById('phoneNumber').value : null;
+            const email = role === 'owner' ? document.getElementById('email').value : null;
+            
+            createUser(username, password, role, houseId, phone, email);
+            refreshAdminDashboard();
+            e.target.reset();
+        });
+
+        document.getElementById('visitorForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const visitor = {
+                id: Date.now().toString(),
+                name: document.getElementById('visitorName').value,
+                phone: document.getElementById('visitorPhone').value,
+                purpose: document.getElementById('purpose').value,
+                vehicleNumber: document.getElementById('vehicleNumber').value,
+                houseId: document.getElementById('visitorHouse').value,
+                timestamp: new Date().toISOString(),
+                status: null
+            };
+            
+            visitors.push(visitor);
+            saveData();
+            refreshGuardDashboard();
+            e.target.reset();
+            
+            // Simulate notification to owner
+            notifyOwner(visitor);
+        });
+
+        // Visitor approval functions
+        function approveVisitor(visitorId) {
+            updateVisitorStatus(visitorId, 'Approved');
+        }
+
+        function rejectVisitor(visitorId) {
+            updateVisitorStatus(visitorId, 'Rejected');
+        }
+
+        function updateVisitorStatus(visitorId, status) {
+            const visitor = visitors.find(v => v.id === visitorId);
+            if (visitor) {
+                visitor.status = status;
+                saveData();
+                refreshOwnerDashboard();
+                refreshGuardDashboard();
+            }
+        }
+
+        // Simulated notification function
+        function notifyOwner(visitor) {
+            // In a real application, this would use WebSocket or Push Notifications
+            console.log(`Notification sent to house ${getHouseNumber(visitor.houseId)}`);
+        }
+
+        // Admin management functions
+        function deleteHouse(houseId) {
+            houses = houses.filter(h => h.id !== houseId);
+            saveData();
+            refreshAdminDashboard();
+        }
+
+        function deleteUser(userId) {
+            users = users.filter(u => u.id !== userId);
+            saveData();
+            refreshAdminDashboard();
+        }
+
+        function resetPassword(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const newPassword = prompt('Enter new password:');
+                if (newPassword) {
+                    user.password = newPassword;
+                    saveData();
+                    alert('Password reset successful');
+                }
+            }
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
